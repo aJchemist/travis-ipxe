@@ -13,13 +13,15 @@ script:
 - cd -
 - make -C ./ipxe/src -j 4 bin/undionly.kpxe
 - make -C ./ipxe/src -j 4 bin-x86_64-efi/ipxe.efi
-- mkdir -p ./target
-- cp ./ipxe/src/bin/undionly.kpxe ./target/
-- cp ./ipxe/src/bin-x86_64-efi/ipxe.efi ./target/
-- md5sum    undionly.kpxe ipxe.efi | tee ./target/MD5SUMS
-- sha1sum   undionly.kpxe ipxe.efi | tee ./target/SHA1SUMS
-- sha256sum undionly.kpxe ipxe.efi | tee ./target/SHA256SUMS
-- sha512sum undionly.kpxe ipxe.efi | tee ./target/SHA512SUMS
+- mkdir -p target
+- cp ./ipxe/src/bin/undionly.kpxe target/
+- cp ./ipxe/src/bin-x86_64-efi/ipxe.efi target/
+- cd target
+- md5sum    undionly.kpxe ipxe.efi | tee MD5SUMS
+- sha1sum   undionly.kpxe ipxe.efi | tee SHA1SUMS
+- sha256sum undionly.kpxe ipxe.efi | tee SHA256SUMS
+- sha512sum undionly.kpxe ipxe.efi | tee SHA512SUMS
+- cd -
 deploy:
   provider: releases
   api-key:
@@ -35,5 +37,4 @@ deploy:
     repo: aJchemist/travis-ipxe
     tags: true
     all_branches: true
-  overwrite: true
   skip_cleanup: true

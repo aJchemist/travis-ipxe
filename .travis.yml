@@ -1,0 +1,39 @@
+sudo: required
+dist: trusty
+language: c
+compiler:
+- gcc
+addons:
+  apt:
+    packages:
+    - binutils-dev
+script:
+- cd ./ipxe/
+- patch -p0 < ../patch/src/config/general.h.diff
+- cd -
+- make -C ./ipxe/src -j 4 bin/undionly.kpxe
+- make -C ./ipxe/src -j 4 bin-x86_64-efi/ipxe.efi
+- mkdir -p ./target
+- cp ./ipxe/src/bin/undionly.kpxe ./target/
+- cp ./ipxe/src/bin-x86_64-efi/ipxe.efi ./target/
+- md5sum    undionly.kpxe ipxe.efi | tee ./target/MD5SUMS
+- sha1sum   undionly.kpxe ipxe.efi | tee ./target/SHA1SUMS
+- sha256sum undionly.kpxe ipxe.efi | tee ./target/SHA256SUMS
+- sha512sum undionly.kpxe ipxe.efi | tee ./target/SHA512SUMS
+deploy:
+  provider: releases
+  api-key:
+    secure: VUZ4xSoXKu9EpEXWcb7S4z63j7a/daxAwUqGfpe5/HYB27jR7SnkpwGrZqkWqDV/oawLo3YhXILtZ8ohc2wqmHtXhbH2+HsAUY0JiRNIKPDWPU4vSIjaSVa+wbak7lPkcN+3ZoSu8qbljifho5Z7vMpX0P8obGUbwcdzbE7xFME5op2OVSbWLzzyIrchbq8AiWvkRQLVT4dSpB+vmEfLc19voJHKbeVBYf6QvOy2zrsBk7XS4v5bEklVK2v9sVtTKOngG4+kDoLX9XrJ3M0cMDIB8OoW9vs2IRdR3X7O4YkI8LuD3y3Q2BN9x3PcCg9TIBo4zrXms6K1O19wz1QLe0ReNGMRhk3ZQs5NnLRWyetjbGsPGDkeNYPblfKFglmMpw+rGbbkjy3O06psuNqaEDKNMNx1s7Uk639aMIMT1TrKnApQGPGhVgdYbEHZS/v1U2P2LYFNcLbkTGFKESHEZGqfzA5pH9xr2l3DiLhjQVtvKYC+LaecqiYBfh4ixWVXgGCYW0s1kHHgcnl8fXPFB/lv5zuKz3u+0xnIxfXQ321EQbhzM7WH60EvqHsYKviNrcCPy3pv2wFaC9FwsaLdnfK5+NHFBHamL94Q9T8zPBkzeJ0m/iad85P7mpCm8sTlN18QlHGUgc+G6N7nWieYgIVDZm0sGObtVWOovVnNVpE=
+  file:
+  - target/undionly.kpxe
+  - target/ipxe.efi
+  - target/MD5SUMS
+  - target/SHA1SUMS
+  - target/SHA256SUMS
+  - target/SHA512SUMS
+  on:
+    repo: aJchemist/travis-ipxe
+    tags: true
+    all_branches: true
+  overwrite: true
+  skip_cleanup: true

@@ -8,9 +8,7 @@ addons:
     packages:
     - binutils-dev
 script:
-- cd ./ipxe/
-- patch -p0 < ../patch/src/config/general.h.diff
-- cd -
+- cp conf.d/local/* ipxe/src/config/local/
 - make -C ./ipxe/src -j 4 bin/undionly.kpxe
 - make -C ./ipxe/src -j 4 bin-x86_64-efi/ipxe.efi
 - mkdir -p target
